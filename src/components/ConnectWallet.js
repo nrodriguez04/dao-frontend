@@ -1,15 +1,17 @@
-// src/components/ConnectWallet.js
 import React, { useState } from 'react';
 import { connectWallet } from '../services/blockchain';
 
 const ConnectWallet = ({ setSigner, setProvider }) => {
     const [walletConnected, setWalletConnected] = useState(false);
+    const [walletAddress, setWalletAddress] = useState('');
 
     const connect = async () => {
-        const { provider, signer } = await connectWallet();
-        if (provider && signer) {
-            setSigner(signer);
-            setProvider(provider);
+        const connection = await connectWallet();
+        if (connection) {
+            setSigner(connection.signer);
+            setProvider(connection.provider);
+            const address = await connection.signer.getAddress();
+            setWalletAddress(address);
             setWalletConnected(true);
         }
     };
@@ -19,7 +21,7 @@ const ConnectWallet = ({ setSigner, setProvider }) => {
             {!walletConnected ? (
                 <button onClick={connect}>Connect Wallet</button>
             ) : (
-                <p>Wallet Connected</p>
+                <p>Connected: {walletAddress}</p>
             )}
         </div>
     );
