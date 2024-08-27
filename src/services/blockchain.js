@@ -5,13 +5,15 @@ export const connectWallet = async () => {
     const provider = await detectEthereumProvider();
 
     if (provider) {
+        console.log("Ethereum provider detected.");
         try {
+            // Request account access if needed
             await provider.request({ method: 'eth_requestAccounts' });
-            const web3Provider = new ethers.BrowserProvider(provider); 
+            const web3Provider = new ethers.BrowserProvider(provider); // Use BrowserProvider for a browser environment
             const signer = await web3Provider.getSigner();
             return { provider: web3Provider, signer };
         } catch (error) {
-            console.error("User rejected the request");
+            console.error("User rejected the request.");
             return null;
         }
     } else {
